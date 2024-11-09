@@ -26,5 +26,4 @@
 
 ### 설치 및 실행 방법
 1. 이 저장소를 클론합니다:
-   ```bash
-   git clone https://github.com/your-repo-url.git
+   git clone https://github.com/5thMaKINGJam/Team3.git
