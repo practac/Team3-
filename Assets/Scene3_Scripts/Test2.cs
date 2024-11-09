@@ -1,0 +1,83 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement; 
+[System.Serializable]
+public class Dialogue2{
+    [TextArea]
+    public string dialogue; 
+    public Sprite cg; 
+
+}
+public class Test2 : MonoBehaviour
+{
+    [SerializeField]private SpriteRenderer sprite_StandingCG;
+    [SerializeField] private SpriteRenderer sprite_DialogueBox; 
+    [SerializeField] private TextMeshProUGUI txt_Dialogue; 
+    [SerializeField] private Image fadeImage; // UI Image for fade effect
+    [SerializeField] private float fadeDuration = 1.0f; // Duration of the fade effect
+    [SerializeField] private int nextSceneIndex; // Index of the next scene to load
+
+    private bool isDialogue= false; 
+    private int count = 0 ;
+    [SerializeField] private Dialogue[] dialogue; 
+
+    public void ShowDialogue(){
+        Debug.Log("ShowDialogue called");
+        Onoff(true); 
+        count = 0; 
+        NextDialogue(); 
+    }
+
+    private void NextDialogue(){
+        txt_Dialogue.text = dialogue[count].dialogue; 
+        sprite_StandingCG.sprite = dialogue[count].cg; 
+        count++; 
+    }
+    private void Onoff(bool _flag){
+        sprite_DialogueBox.gameObject.SetActive(_flag); 
+        sprite_StandingCG.gameObject.SetActive(_flag);
+        txt_Dialogue.gameObject.SetActive(_flag); 
+        isDialogue = _flag; 
+    }
+
+     void Start() {
+       
+        Onoff(false);
+        fadeImage.color = new Color(0, 0, 0, 0); // Ensure fade image is transparent at start
+    }
+    void Update()
+    {
+        if(isDialogue){
+            if(Input.GetKeyDown(KeyCode.Space)){
+                if(count < dialogue.Length)
+                    NextDialogue();
+                else {
+                    Onoff(false); 
+                    StartCoroutine(FadeOutAndLoadScene()); // Start fade out and scene transition
+                
+                }
+                    
+        }
+        }
+    }
+        
+    private IEnumerator FadeOutAndLoadScene()
+    {
+        float timer = 0;
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            fadeImage.color = new Color(0, 0, 0, timer / fadeDuration);
+            yield return null;
+        }
+        
+        // Load the next scene after the fade out
+        SceneManager.LoadScene("4");
+        
+    }
+
+    
+}
