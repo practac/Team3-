@@ -1566,9 +1566,17 @@ PrefabInstance:
       value: "\uBC30\uD2C0 \uB85C\uADF8 "
       objectReference: {fileID: 0}
     - target: {fileID: 3949430832358531894, guid: e1415022b8069f244be91e5f57f64110, type: 3}
+      propertyPath: m_fontSize
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3949430832358531894, guid: e1415022b8069f244be91e5f57f64110, type: 3}
       propertyPath: m_fontAsset
       value: 
       objectReference: {fileID: 11400000, guid: 717d5bf29b8883d49a986ab028d2a7aa, type: 2}
+    - target: {fileID: 3949430832358531894, guid: e1415022b8069f244be91e5f57f64110, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 3949430832358531894, guid: e1415022b8069f244be91e5f57f64110, type: 3}
       propertyPath: m_isRightToLeft
       value: 0
@@ -1655,7 +1663,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5781773265571871132, guid: e1415022b8069f244be91e5f57f64110, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -44
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 5781773265571871132, guid: e1415022b8069f244be91e5f57f64110, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
