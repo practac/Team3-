@@ -2,85 +2,76 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
-    public EnemyCharacter enemy;       // 적 캐릭터를 참조
-    public TMP_Text battleLog;         // 전투 로그를 표시할 TextMeshPro 텍스트 오브젝트
+    public string enemyName = "Enemy";      // Enemy 이름
+    public Slider enemyHpBar;               // Enemy HP Bar (Slider)
+    public TextMeshProUGUI battleLog;       // Battle Log TextMeshPro
+    public Button throwButton;              // 던지기 버튼
+    public Button kickButton;               // 날아차기 버튼
+    public Button punchButton;              // 때리기 버튼
 
-    // 공격력 및 성공 확률 설정
-    public int basicAttackPower = 10;
-    public int strongAttackPower = 15;
-    public int specialAttackPower = 20;
-    public float basicAttackChance = 0.9f;
-    public float strongAttackChance = 0.7f;
-    public float specialAttackChance = 0.5f;
+    private int enemyMaxHp = 100;           // Enemy의 최대 HP
+    private int enemyCurrentHp;
 
-    private void Start()
+    void Start()
     {
-        // 필수 참조가 올바르게 설정되었는지 확인
-        if (enemy == null)
-        {
-            Debug.LogError("Enemy reference is missing in BattleManager.");
-        }
-        if (battleLog == null)
-        {
-            Debug.LogError("Battle Log reference is missing in BattleManager.");
-        }
+        enemyCurrentHp = enemyMaxHp;
+        enemyHpBar.maxValue = enemyMaxHp;
+        enemyHpBar.value = enemyCurrentHp;
+
+        throwButton.onClick.AddListener(() => Attack("던지기"));
+        kickButton.onClick.AddListener(() => Attack("날아차기"));
+        punchButton.onClick.AddListener(() => Attack("때리기"));
     }
 
-    public void OnBasicAttack()
+    // 공격 메소드
+    void Attack(string attackType)
     {
-        if (enemy == null || battleLog == null) return;
+        int damage = CalculateDamage(attackType);
+        bool isSuccessful = Random.Range(0, 100) < 75; // 공격 성공 확률 75%
 
-        Debug.Log("Basic Attack button clicked.");
-
-        if (Random.value < basicAttackChance)
+        if (isSuccessful)
         {
-            int damage = Random.Range(basicAttackPower - 5, basicAttackPower + 5);
-            enemy.TakeDamage(damage);
-            battleLog.text = $"기본 공격 성공! {enemy.characterName}에게 {damage}의 데미지를 입혔습니다.";
+            enemyCurrentHp -= damage;
+            enemyCurrentHp = Mathf.Clamp(enemyCurrentHp, 0, enemyMaxHp); // HP 0 이하로 가지 않게 제한
+            enemyHpBar.value = enemyCurrentHp;
+            battleLog.text = $"{attackType} 공격 성공!\n {enemyName}에게 {damage} 피해를 입혔습니다.";
         }
         else
         {
-            battleLog.text = "기본 공격이 실패했습니다!";
+            battleLog.text = $"{attackType} 공격 실패!\n {enemyName}에게 피해를 입히지 못했습니다.";
+        }
+
+        // Enemy의 HP가 0이 되면 게임 승리 메시지 표시
+        if (enemyCurrentHp <= 0)
+        {
+            battleLog.text = $"{enemyName}를 처치했습니다!";
+            throwButton.interactable = false;
+            kickButton.interactable = false;
+            punchButton.interactable = false;
         }
     }
 
-    public void OnStrongAttack()
+    // 공격 종류에 따른 피해 계산
+    int CalculateDamage(string attackType)
     {
-        if (enemy == null || battleLog == null) return;
-
-        Debug.Log("Strong Attack button clicked.");
-
-        if (Random.value < strongAttackChance)
+        int damage = 0;
+        switch (attackType)
         {
-            int damage = Random.Range(strongAttackPower - 10, strongAttackPower + 10);
-            enemy.TakeDamage(damage);
-            battleLog.text = $"강력한 공격 성공! {enemy.characterName}에게 {damage}의 데미지를 입혔습니다.";
+            case "던지기":
+                damage = Random.Range(5, 15); // 던지기: 5~15 피해
+                break;
+            case "날아차기":
+                damage = Random.Range(10, 20); // 날아차기: 10~20 피해
+                break;
+            case "때리기":
+                damage = Random.Range(15, 25); // 때리기: 15~25 피해
+                break;
         }
-        else
-        {
-            battleLog.text = "강력한 공격이 실패했습니다!";
-        }
-    }
-
-    public void OnSpecialAttack()
-    {
-        if (enemy == null || battleLog == null) return;
-
-        Debug.Log("Special Attack button clicked.");
-
-        if (Random.value < specialAttackChance)
-        {
-            int damage = Random.Range(specialAttackPower - 15, specialAttackPower + 15);
-            enemy.TakeDamage(damage);
-            battleLog.text = $"특수 공격 성공! {enemy.characterName}에게 {damage}의 데미지를 입혔습니다.";
-        }
-        else
-        {
-            battleLog.text = "특수 공격이 실패했습니다!";
-        }
+        return damage;
     }
 }
 
