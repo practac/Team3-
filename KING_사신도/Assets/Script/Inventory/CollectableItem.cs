@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class CollectibleItem : MonoBehaviour
+public class CollectableItem : MonoBehaviour
 {
     public Sprite itemSprite; // 이 아이템의 스프라이트 (아이템 이미지)
 
-    private void OnMouseDown() // 아이템을 클릭했을 때 호출 (PC 환경에서 사용 가능)
+    private void OnMouseDown() // Collider 2D가 있는 오브젝트를 클릭할 때 호출됨
     {
         // InventoryManager의 AddItemToSlot 메서드를 호출하여 아이템을 인벤토리에 추가
         InventoryManager.Instance.AddItemToSlot(itemSprite);
@@ -15,3 +14,4 @@ public class CollectibleItem : MonoBehaviour
         gameObject.SetActive(false);
     }
 }
+
