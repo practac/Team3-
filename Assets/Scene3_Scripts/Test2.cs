@@ -19,6 +19,7 @@ public class Test2 : MonoBehaviour
     [SerializeField] private Image fadeImage; // UI Image for fade effect
     [SerializeField] private float fadeDuration = 1.0f; // Duration of the fade effect
     [SerializeField] private int nextSceneIndex; // Index of the next scene to load
+    [SerializeField] private Button dialogueButton; // Button to show/hide during transitions
 
     private bool isDialogue= false; 
     private int count = 0 ;
@@ -66,6 +67,12 @@ public class Test2 : MonoBehaviour
         
     private IEnumerator FadeOutAndLoadScene()
     {
+         // Turn off dialogue button when images start to show
+        if (dialogueButton != null)
+        {
+            dialogueButton.gameObject.SetActive(false);
+        }
+
         float timer = 0;
         while (timer < fadeDuration)
         {
