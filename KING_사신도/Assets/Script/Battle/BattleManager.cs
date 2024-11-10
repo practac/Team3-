@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
 public class BattleManager : MonoBehaviour
 {
     public string enemyName = "Enemy";                  // Enemy 이름
@@ -12,10 +13,9 @@ public class BattleManager : MonoBehaviour
     public Button kickButton;                           // 날아차기 버튼
     public Button punchButton;                          // 때리기 버튼
 
-    public GameObject throwEffectPrefab;                // 던지기 효과 프리팹 (Hit_01)
-    public GameObject kickEffectPrefab;                 // 날아차기 효과 프리팹 (Hit_02)
-    public GameObject punchEffectPrefab;                // 때리기 효과 프리팹 (Hit_04)
-    public Transform enemyPosition;                     // Enemy의 위치를 나타내는 Transform
+    public GameObject throwEffect;                      // 던지기 효과 오브젝트 (Hierarchy에 존재)
+    public GameObject kickEffect;                       // 날아차기 효과 오브젝트 (Hierarchy에 존재)
+    public GameObject punchEffect;                      // 때리기 효과 오브젝트 (Hierarchy에 존재)
 
     private int enemyMaxHp = 100;                       // Enemy의 최대 HP
     private int enemyCurrentHp;
@@ -26,13 +26,15 @@ public class BattleManager : MonoBehaviour
         enemyHpBar.maxValue = enemyMaxHp;
         enemyHpBar.value = enemyCurrentHp;
 
-        throwButton.onClick.AddListener(() => Attack("던지기", throwEffectPrefab));
-        kickButton.onClick.AddListener(() => Attack("날아차기", kickEffectPrefab));
-        punchButton.onClick.AddListener(() => Attack("때리기", punchEffectPrefab));
+        battleLog.text = $"{enemyName}을(를) 스킬을 사용해 공격하시오.";
+
+        throwButton.onClick.AddListener(() => Attack("던지기", throwEffect));
+        kickButton.onClick.AddListener(() => Attack("날아차기", kickEffect));
+        punchButton.onClick.AddListener(() => Attack("때리기", punchEffect));
     }
 
     // 공격 메소드
-    void Attack(string attackType, GameObject effectPrefab)
+    void Attack(string attackType, GameObject effectObject)
     {
         int damage = CalculateDamage(attackType);
         bool isSuccessful = Random.Range(0, 100) < 75; // 공격 성공 확률 75%
@@ -43,7 +45,7 @@ public class BattleManager : MonoBehaviour
             enemyCurrentHp = Mathf.Clamp(enemyCurrentHp, 0, enemyMaxHp); // HP 0 이하로 가지 않게 제한
             enemyHpBar.value = enemyCurrentHp;
             battleLog.text = $"{attackType} 공격 성공!\n {enemyName}에게 {damage} 피해를 입혔습니다.";
-            PlayEffect(effectPrefab); // 효과 실행
+            StartCoroutine(ShowEffect(effectObject)); // 효과 실행
         }
         else
         {
@@ -60,14 +62,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // 효과 재생 메소드
-    void PlayEffect(GameObject effectPrefab)
+    // 효과를 잠시 활성화하는 코루틴
+    IEnumerator ShowEffect(GameObject effectObject)
     {
-        if (effectPrefab != null)
-        {
-            GameObject effect = Instantiate(effectPrefab, enemyPosition.position, Quaternion.identity);
-            Destroy(effect, 1.5f); // 1.5초 후에 효과 파괴 (필요에 따라 조정 가능)
-        }
+        effectObject.SetActive(true); // 효과 오브젝트 활성화
+        yield return new WaitForSeconds(1.5f); // 1.5초 동안 유지 (필요에 따라 조정 가능)
+        effectObject.SetActive(false); // 효과 오브젝트 비활성화
     }
 
     // 공격 종류에 따른 피해 계산
