@@ -74,4 +74,3 @@ public class BattleManager : MonoBehaviour
         return damage;
     }
 }
-
